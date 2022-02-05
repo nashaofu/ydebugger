@@ -1,5 +1,5 @@
 import yargs from 'yargs';
-import devtools, { Options } from './devtools';
+import ydebugger, { Options } from './ydebugger';
 
 yargs
   .strict(true)
@@ -43,7 +43,7 @@ yargs
           default: false,
           describe: 'Open browser automatically',
         }),
-    (argv) => devtools(argv),
+    (argv) => ydebugger(argv),
   )
   /* eslint-enable @typescript-eslint/indent */
   .parse(process.argv.slice(2));
