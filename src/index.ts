@@ -28,14 +28,14 @@ yargs
         .positional('url', {
           type: 'string',
           require: true,
-          describe: 'debug url',
+          describe: 'debugging website url',
         })
         .option('port', {
           alias: 'p',
           type: 'number',
-          default: 9222,
+          default: 8080,
           requiresArg: true,
-          describe: 'devtools frontedn port number',
+          describe: 'devtools frontend port number',
         })
         .option('open', {
           alias: 'o',

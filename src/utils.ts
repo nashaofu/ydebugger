@@ -2,8 +2,18 @@ import os from 'os';
 import http from 'http';
 import colors from 'colors';
 
-export function getDevtoolsFrontendUrl(port: number) {
-  return new Promise<string>((resolve, reject) => {
+export interface DevtoolsInfo {
+  description: string
+  devtoolsFrontendUrl: string
+  id: string
+  title: string
+  type: string
+  url: string
+  webSocketDebuggerUrl: string
+}
+
+export function getDevtoolsInfo(port: number) {
+  return new Promise<DevtoolsInfo>((resolve, reject) => {
     http
       .get(`http://127.0.0.1:${port}/json`, (res) => {
         const buffers: Buffer[] = [];
@@ -15,8 +25,8 @@ export function getDevtoolsFrontendUrl(port: number) {
             const data = Buffer.concat(buffers).toString('utf8');
 
             try {
-              const json = JSON.parse(data);
-              resolve(json[0].devtoolsFrontendUrl);
+              const json = JSON.parse(data) as DevtoolsInfo[];
+              resolve(json[0]);
             } catch (err) {
               reject(err);
             }
@@ -46,8 +56,8 @@ export function getIPv4urls(port: number): string[] {
   }, []);
 }
 
-export function print(port: number, devtoolsFrontendUrl: string) {
-  const url = `http://127.0.0.1:${port}${devtoolsFrontendUrl}`;
+export function printUrls(port: number) {
+  const url = `http://127.0.0.1:${port}`;
   const ipv4Urls = getIPv4urls(port);
 
   /* eslint-disable no-console */
@@ -55,7 +65,26 @@ export function print(port: number, devtoolsFrontendUrl: string) {
 
   if (ipv4Urls.length) {
     console.log(`${colors.bgWhite.black(' N ')} You can also visit it by:`);
-    console.log(`\n${ipv4Urls.map((ipv4Url) => `    ${ipv4Url}${devtoolsFrontendUrl}`).join('\n')}\n`);
+    console.log(`\n${ipv4Urls.map((ipv4Url) => `    ${ipv4Url}`).join('\n')}\n`);
   }
   /* eslint-disable no-console */
+}
+
+export function runOnlyOnceSuccessfully<T extends unknown[], R>(fn: (...args: T) => Promise<R>) {
+  let result: Promise<R> | null = null;
+  // eslint-disable-next-line func-names
+  return async function (this: unknown, ...args: T) {
+    if (!result) {
+      result = fn.call(this, ...args);
+      try {
+        // eslint-disable-next-line @typescript-eslint/return-await
+        return await result;
+      } catch (err) {
+        result = null;
+        throw err;
+      }
+    } else {
+      return result;
+    }
+  };
 }
