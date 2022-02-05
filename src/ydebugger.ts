@@ -48,9 +48,13 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
   app.get('*', async (req, res, next) => {
     if (!req.path.startsWith('/devtools')) {
       const debuggerId = await getDebuggerId();
-      const protocol = req.secure ? 'wss' : 'ws';
-      const wsUrl = `${req.get('host')}/devtools/page/${debuggerId}`;
-      res.redirect(`/devtools/inspector.html?${protocol}=${wsUrl}`);
+      res.send(`<script>
+  const { protocol, hostname } = window.location
+  const wsProtocol = protocol === 'https:' ? 'wss' : 'ws'
+  const wsUrl = \`\${hostname}/devtools/page/${debuggerId}\`
+  window.location.replace(\`/devtools/inspector.html?\${wsProtocol}=\${wsUrl}\`)
+</script>
+    `);
     }
     next();
   });
