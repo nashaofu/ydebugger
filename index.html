@@ -66,43 +66,49 @@
       loading...
     </ul>
     <script>
-      fetch('/json')
-        .then(res => res.json())
-        .then(devtoolsInfos => {
-          const $container = document.querySelector('#container')
-          $container.textContent = ''
+      function main() {
+        fetch('/json')
+          .then(res => res.json())
+          .then(devtoolsInfos => {
+            const $container = document.querySelector('#container')
+            $container.textContent = ''
 
-          devtoolsInfos.map(item => {
-            const { protocol, host } = window.location
-            const wsProtocol = protocol === 'https:' ? 'wss' : 'ws'
-            const wsUrl = `${host}/devtools/page/${item.id}`
-            const href = `/devtools/inspector.html?${wsProtocol}=${wsUrl}`
+            devtoolsInfos.map(item => {
+              const { protocol, host } = window.location
+              const wsProtocol = protocol === 'https:' ? 'wss' : 'ws'
+              const wsUrl = `${host}/devtools/page/${item.id}`
+              const href = `/devtools/inspector.html?${wsProtocol}=${wsUrl}`
 
-            const $li = document.createElement('li')
-            const $title = document.createElement('div')
-            const $url = document.createElement('div')
-            const $footer = document.createElement('div')
-            const $a = document.createElement('a')
+              const $li = document.createElement('li')
+              const $title = document.createElement('div')
+              const $url = document.createElement('div')
+              const $footer = document.createElement('div')
+              const $a = document.createElement('a')
 
-            $li.appendChild($title)
-            $li.appendChild($url)
-            $li.appendChild($footer)
-            $footer.appendChild($a)
+              $li.appendChild($title)
+              $li.appendChild($url)
+              $li.appendChild($footer)
+              $footer.appendChild($a)
 
-            $title.classList.add('title')
-            $url.classList.add('url')
-            $footer.classList.add('footer')
-            $a.classList.add('button')
+              $title.classList.add('title')
+              $url.classList.add('url')
+              $footer.classList.add('footer')
+              $a.classList.add('button')
 
-            $title.textContent = item.title
-            $url.textContent = item.url
-            $a.href = href
-            $a.target = '_blank'
-            $a.textContent = 'inspect'
+              $title.textContent = item.title
+              $url.textContent = item.url
+              $a.href = href
+              $a.target = '_blank'
+              $a.textContent = 'inspect'
 
-            $container.appendChild($li)
+              $container.appendChild($li)
+            })
           })
-        })
+
+        setTimeout(() => main(), 1000)
+      }
+
+      main()
     </script>
   </body>
 </html>

@@ -1,8 +1,8 @@
-import open from 'open';
 import path from 'path';
+import open from 'open';
 import yargs from 'yargs';
-import detect from 'detect-port';
 import express from 'express';
+import detect from 'detect-port';
 import puppeteer from 'puppeteer';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { printUrls } from './utils';
@@ -34,8 +34,6 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
     },
   });
 
-  // const pages = await browser.pages();
-  // await Promise.all(pages.map((page) => page.close()));
   const page = await browser.newPage();
   await page.goto(argv.url);
 

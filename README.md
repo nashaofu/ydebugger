@@ -1,6 +1,6 @@
 # ydebugger
 
-让你的平板不再吃灰，不再买前生产力，买后爱奇艺，为平板设备web开发者工具，可使用 Github codespace & codeserver 进行web开发。
+让你的平板不再吃灰，不再买前生产力，买后爱奇艺，为平板设备 web 开发者工具，可使用 Github codespace & codeserver 进行 web 开发。调试界面基于 Chrome Devtools。
 
 ## Usage
 
@@ -9,6 +9,16 @@ npm i -g ydebugger
 
 ydebugger https://www.google.com
 ```
+
+## Screenshots
+
+- 所有可调试页面
+
+![index.png](./screenshots/index.png)
+
+- 调试页面
+
+![inspect.png](./screenshots/inspect.png)
 
 ## Options
 
