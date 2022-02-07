@@ -10,6 +10,12 @@ export interface Options {
   url: string
   port: number
   open: boolean
+  width: number
+  height: number
+  mobile: boolean
+  landscape: boolean
+  touch: boolean
+  dsp: number
 }
 
 export default async function ydebugger(argv: yargs.Arguments<Options>) {
@@ -17,6 +23,14 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
 
   const browser = await puppeteer.launch({
     debuggingPort,
+    defaultViewport: {
+      width: argv.width,
+      height: argv.height,
+      deviceScaleFactor: argv.dsp,
+      isMobile: argv.mobile,
+      isLandscape: argv.landscape,
+      hasTouch: argv.touch,
+    },
   });
 
   const getDebuggerId = runOnlyOnceSuccessfully(async () => {
@@ -36,6 +50,7 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
     createProxyMiddleware({
       target: `http://127.0.0.1:${debuggingPort}`,
       ws: true,
+      logLevel: 'warn',
       onProxyReqWs: (proxyReq, req, socket) => {
         socket.on('error', (err) => {
           // eslint-disable-next-line no-console
@@ -48,13 +63,11 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
   app.get('*', async (req, res, next) => {
     if (!req.path.startsWith('/devtools')) {
       const debuggerId = await getDebuggerId();
-      res.send(`<script>
-  const { protocol, hostname } = window.location
-  const wsProtocol = protocol === 'https:' ? 'wss' : 'ws'
-  const wsUrl = \`\${hostname}/devtools/page/${debuggerId}\`
-  window.location.replace(\`/devtools/inspector.html?\${wsProtocol}=\${wsUrl}\`)
-</script>
-    `);
+      const protocol = req.get('x-forwarded-proto') ?? req.protocol;
+      const host = req.get('X-Forwarded-Host') || req.get('host');
+      const wsProto = protocol === 'https' ? 'wss' : 'ws';
+      const wsUrl = `${host}/devtools/page/${debuggerId}`;
+      res.redirect(`/devtools/inspector.html?${wsProto}=${wsUrl}`);
     }
     next();
   });
