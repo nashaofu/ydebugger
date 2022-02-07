@@ -1,10 +1,11 @@
 import open from 'open';
+import path from 'path';
 import yargs from 'yargs';
 import detect from 'detect-port';
 import express from 'express';
 import puppeteer from 'puppeteer';
 import { createProxyMiddleware } from 'http-proxy-middleware';
-import { getDevtoolsInfo, printUrls, runOnlyOnceSuccessfully } from './utils';
+import { printUrls } from './utils';
 
 export interface Options {
   url: string
@@ -19,7 +20,7 @@ export interface Options {
 }
 
 export default async function ydebugger(argv: yargs.Arguments<Options>) {
-  const [debuggingPort, port] = await Promise.all([detect(9222), detect(argv.port)]);
+  const debuggingPort = await detect(9222);
 
   const browser = await puppeteer.launch({
     debuggingPort,
@@ -33,15 +34,10 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
     },
   });
 
-  const getDebuggerId = runOnlyOnceSuccessfully(async () => {
-    const pages = await browser.pages();
-    await Promise.all(pages.map((page) => page.close()));
-    const page = await browser.newPage();
-    await page.goto(argv.url);
-    const devtoolsInfo = await getDevtoolsInfo(debuggingPort);
-
-    return devtoolsInfo.id;
-  });
+  // const pages = await browser.pages();
+  // await Promise.all(pages.map((page) => page.close()));
+  const page = await browser.newPage();
+  await page.goto(argv.url);
 
   const app = express();
 
@@ -60,18 +56,26 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
     }),
   );
 
-  app.get('*', async (req, res, next) => {
-    if (!req.path.startsWith('/devtools')) {
-      const debuggerId = await getDebuggerId();
-      const protocol = req.get('x-forwarded-proto') ?? req.protocol;
-      const host = req.get('X-Forwarded-Host') || req.get('host');
-      const wsProto = protocol === 'https' ? 'wss' : 'ws';
-      const wsUrl = `${host}/devtools/page/${debuggerId}`;
-      res.redirect(`/devtools/inspector.html?${wsProto}=${wsUrl}`);
-    }
-    next();
+  app.use(
+    '/json',
+    createProxyMiddleware({
+      target: `http://127.0.0.1:${debuggingPort}`,
+      ws: false,
+      logLevel: 'warn',
+    }),
+  );
+
+  app.get('/', async (req, res, next) => {
+    res.sendFile(path.join(__dirname, '../index.html'), (err) => {
+      if (err) {
+        next(err);
+      } else {
+        next();
+      }
+    });
   });
 
+  const port = await detect(argv.port);
   app.listen(port, () => {
     printUrls(port);
 

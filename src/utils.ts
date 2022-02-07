@@ -1,45 +1,5 @@
 import os from 'os';
-import http from 'http';
 import colors from 'colors';
-
-export interface DevtoolsInfo {
-  description: string
-  devtoolsFrontendUrl: string
-  id: string
-  title: string
-  type: string
-  url: string
-  webSocketDebuggerUrl: string
-}
-
-export function getDevtoolsInfo(port: number) {
-  return new Promise<DevtoolsInfo>((resolve, reject) => {
-    http
-      .get(`http://127.0.0.1:${port}/json`, (res) => {
-        const buffers: Buffer[] = [];
-        res
-          .on('data', (chunk) => {
-            buffers.push(chunk);
-          })
-          .on('end', () => {
-            const data = Buffer.concat(buffers).toString('utf8');
-
-            try {
-              const json = JSON.parse(data) as DevtoolsInfo[];
-              resolve(json[0]);
-            } catch (err) {
-              reject(err);
-            }
-          })
-          .on('error', (err) => {
-            reject(err);
-          });
-      })
-      .on('error', (err) => {
-        reject(err);
-      });
-  });
-}
 
 /**
  * 获取局域网ip
@@ -68,23 +28,4 @@ export function printUrls(port: number) {
     console.log(`\n${ipv4Urls.map((ipv4Url) => `    ${ipv4Url}`).join('\n')}\n`);
   }
   /* eslint-disable no-console */
-}
-
-export function runOnlyOnceSuccessfully<T extends unknown[], R>(fn: (...args: T) => Promise<R>) {
-  let result: Promise<R> | null = null;
-  // eslint-disable-next-line func-names
-  return async function (this: unknown, ...args: T) {
-    if (!result) {
-      result = fn.call(this, ...args);
-      try {
-        // eslint-disable-next-line @typescript-eslint/return-await
-        return await result;
-      } catch (err) {
-        result = null;
-        throw err;
-      }
-    } else {
-      return result;
-    }
-  };
 }
