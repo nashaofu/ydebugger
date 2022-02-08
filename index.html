@@ -11,6 +11,7 @@
         margin: 0;
         padding: 0;
         color: #333;
+        min-width: 360px;
       }
 
       *,
@@ -24,13 +25,66 @@
         margin: 16px 0;
       }
 
-      #container {
+      .open-url {
+        padding: 0 24px;
+        margin: 16px 0;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      #url {
+        width: 300px;
+        margin: 0;
+        padding: 4px 8px;
+        color: #000000;
+        font-size: 14px;
+        background: #fff;
+        border: 1px solid #d9d9d9;
+        border-radius: 0;
+        outline: none;
+      }
+
+      #open {
+        padding: 4px 8px;
+        outline: none;
+        border: 1px solid #d9d9d9;
+        border-radius: 0;
+        font-weight: 400;
+        font-size: 14px;
+        background: #fff;
+        cursor: pointer;
+        color: #000000;
+        user-select: none;
+        margin-left: -1px;
+        transition: all 0.3s;
+      }
+
+      #url:hover,
+      #url:focus,
+      #open:hover,
+      #open:active {
+        border-color: #08f;
+        position: relative;
+        z-index: 1;
+      }
+
+      #open:hover,
+      #open:active {
+        color: #03f;
+      }
+
+      #open:active {
+        background: #f0f0f0;
+      }
+
+      #pages {
         list-style: disc;
         padding: 0 40px;
         margin: 0;
       }
 
-      #container > li {
+      #pages > li {
         margin: 16px 0;
         padding: 0;
         font-size: 14px;
@@ -58,20 +112,32 @@
       .button:hover {
         text-decoration: underline;
       }
+
+      .button + .button {
+        margin-left: 8px;
+      }
     </style>
   </head>
   <body>
     <h1>Pages</h1>
-    <ul id="container">
+    <div class="open-url">
+      <input id="url" type="text" placeholder="Open tab with url" />
+      <button id="open">Open</button>
+    </div>
+    <ul id="pages">
       loading...
     </ul>
     <script>
-      function main() {
+      const $url = document.querySelector('#url')
+      const $open = document.querySelector('#open')
+      const $pages = document.querySelector('#pages')
+
+      // https://chromedevtools.github.io/devtools-protocol/#endpoints
+      function getPages() {
         fetch('/json')
           .then(res => res.json())
           .then(devtoolsInfos => {
-            const $container = document.querySelector('#container')
-            $container.textContent = ''
+            $pages.textContent = ''
 
             devtoolsInfos.map(item => {
               const { protocol, host } = window.location
@@ -83,32 +149,40 @@
               const $title = document.createElement('div')
               const $url = document.createElement('div')
               const $footer = document.createElement('div')
-              const $a = document.createElement('a')
+              const $inspect = document.createElement('a')
+              const $close = document.createElement('a')
 
               $li.appendChild($title)
               $li.appendChild($url)
               $li.appendChild($footer)
-              $footer.appendChild($a)
+              $footer.appendChild($inspect)
+              $footer.appendChild($close)
 
               $title.classList.add('title')
               $url.classList.add('url')
               $footer.classList.add('footer')
-              $a.classList.add('button')
+              $inspect.classList.add('button')
+              $close.classList.add('button')
 
               $title.textContent = item.title
               $url.textContent = item.url
-              $a.href = href
-              $a.target = '_blank'
-              $a.textContent = 'inspect'
+              $inspect.href = href
+              $inspect.target = '_blank'
+              $inspect.textContent = 'inspect'
+              $close.textContent = 'close'
 
-              $container.appendChild($li)
+              $close.addEventListener('click', () => fetch(`/json/close/${item.id}`))
+
+              $pages.appendChild($li)
             })
           })
 
-        setTimeout(() => main(), 1000)
+        setTimeout(() => getPages(), 1000)
       }
 
-      main()
+      getPages()
+
+      $open.addEventListener('click', () => fetch(`/json/new?${$url.value}`))
     </script>
   </body>
 </html>

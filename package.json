@@ -1,6 +1,6 @@
 {
   "name": "ydebugger",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "让你的平板不再吃灰，不再买前生产力，买后爱奇艺，让 Github Codespace & Codeserver 也能在平板设备上进行 Web 开发调试。",
   "main": "index.js",
   "bin": {
