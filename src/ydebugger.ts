@@ -54,11 +54,11 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
       },
       onProxyRes: responseInterceptor((buffer, proxyRes, req) => {
         if (req.url?.startsWith('/devtools/inspector.html')) {
-          const h = '<head>';
-          const content = buffer.toString('utf8').split(h);
+          const splitter = '<meta name="referrer" content="no-referrer">';
+          const content = buffer.toString('utf8').split(splitter);
 
-          const html = `${content[0]}${h}
-          <script src="/@webcomponents-custom-elements.js"></script>${content[1]}`;
+          const html = `${content[0]}${splitter}
+    <script src="/@webcomponents-custom-elements.js"></script>${content[1]}`;
 
           return Promise.resolve(html);
         }

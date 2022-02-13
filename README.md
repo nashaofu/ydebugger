@@ -50,3 +50,8 @@ curl -o HarmonyOS_Sans.zip https://communityfile-drcn.op.hicloud.com/FileServer/
 
 unzip -d ~/.fonts/ HarmonyOS_Sans.zip
 ```
+
+## 问题
+
+- 如果是 iPad，请确保使用最新版本的 Safari 访问调试页面，否则可能存在白屏问题。
+- 安卓平板请使用最新版本 Chrome 访问调试页面，否则可能存在白屏问题。
