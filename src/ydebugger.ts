@@ -4,7 +4,7 @@ import yargs from 'yargs';
 import express from 'express';
 import detect from 'detect-port';
 import puppeteer from 'puppeteer';
-import { createProxyMiddleware } from 'http-proxy-middleware';
+import { createProxyMiddleware, responseInterceptor } from 'http-proxy-middleware';
 import { printUrls } from './utils';
 
 export interface Options {
@@ -23,7 +23,7 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
   const debuggingPort = await detect(9222);
 
   const browser = await puppeteer.launch({
-    debuggingPort,
+    args: [`--remote-debugging-port=${debuggingPort}`],
     defaultViewport: {
       width: argv.width,
       height: argv.height,
@@ -45,12 +45,25 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
       target: `http://127.0.0.1:${debuggingPort}`,
       ws: true,
       logLevel: 'warn',
+      selfHandleResponse: true,
       onProxyReqWs: (proxyReq, req, socket) => {
         socket.on('error', (err) => {
           // eslint-disable-next-line no-console
           console.error(err);
         });
       },
+      onProxyRes: responseInterceptor((buffer, proxyRes, req) => {
+        if (req.url?.startsWith('/devtools/inspector.html')) {
+          const h = '<head>';
+          const content = buffer.toString('utf8').split(h);
+
+          const html = `${content[0]}${h}
+          <script src="/@webcomponents-custom-elements.js"></script>${content[1]}`;
+
+          return Promise.resolve(html);
+        }
+        return Promise.resolve(buffer);
+      }),
     }),
   );
 
@@ -63,8 +76,18 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
     }),
   );
 
-  app.get('/', async (req, res, next) => {
+  app.get('/', (req, res, next) => {
     res.sendFile(path.join(__dirname, '../index.html'), (err) => {
+      if (err) {
+        next(err);
+      } else {
+        next();
+      }
+    });
+  });
+
+  app.get('/@webcomponents-custom-elements.js', (req, res, next) => {
+    res.sendFile(path.join(__dirname, '../@webcomponents-custom-elements.js'), (err) => {
       if (err) {
         next(err);
       } else {

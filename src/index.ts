@@ -14,7 +14,7 @@ yargs
     /* eslint-disable no-console */
     console.log();
     if (err) {
-      console.error(msg);
+      console.error(msg || err);
     }
     /* eslint-enable no-console */
     process.exit(1);
