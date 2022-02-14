@@ -51,7 +51,7 @@ curl -o HarmonyOS_Sans.zip https://communityfile-drcn.op.hicloud.com/FileServer/
 unzip -d ~/.fonts/ HarmonyOS_Sans.zip
 ```
 
-## 问题
+## FAQ
 
-- 如果是 iPad，请确保使用最新版本的 Safari 访问调试页面，否则可能存在白屏问题。
-- 安卓平板请使用最新版本 Chrome 访问调试页面，否则可能存在白屏问题。
+- 页面白屏。如果是 iPad，请确保使用最新版本的 Safari 或 Chrome 访问调试页面，安卓平板，请使用最新版本 Chrome 或其他浏览器最新版本访问调试页面。
+- 是否支持 Firefox？目前支持主流浏览器的的最新版本，具体兼容性未测试，主要支持 Safari 与 Chrome。
