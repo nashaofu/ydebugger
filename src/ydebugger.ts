@@ -39,6 +39,8 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
 
   const app = express();
 
+  app.use('/polyfill', express.static(path.join(__dirname, '../polyfill')));
+
   app.use(
     '/devtools',
     createProxyMiddleware({
@@ -58,7 +60,8 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
           const content = buffer.toString('utf8').split(splitter);
 
           const html = `${content[0]}${splitter}
-    <script src="/@webcomponents-custom-elements.js"></script>${content[1]}`;
+    <script src="/polyfill/custom-elements.js"></script>
+    <script src="/polyfill/ShadowRoot-getSelection.js"></script>${content[1]}`;
 
           return Promise.resolve(html);
         }
@@ -78,16 +81,6 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
 
   app.get('/', (req, res, next) => {
     res.sendFile(path.join(__dirname, '../index.html'), (err) => {
-      if (err) {
-        next(err);
-      } else {
-        next();
-      }
-    });
-  });
-
-  app.get('/@webcomponents-custom-elements.js', (req, res, next) => {
-    res.sendFile(path.join(__dirname, '../@webcomponents-custom-elements.js'), (err) => {
       if (err) {
         next(err);
       } else {
