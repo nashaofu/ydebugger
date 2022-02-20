@@ -1,6 +1,6 @@
 # ydebugger
 
-让你的平板不再吃灰，不再买前生产力，买后爱奇艺，让 Github Codespace & Codeserver 也能在平板设备上进行 Web 开发调试。
+A remote webapp of the Chrome DevTools, you can develop and debug front-end pages on iPad Browser with [GitHub codespaces](https://github.com/features/codespaces) or [code-server](https://github.com/coder/code-server).
 
 ## Usage
 
@@ -10,13 +10,22 @@ npm i -g ydebugger
 ydebugger https://www.google.com
 ```
 
+## Browser support
+
+| name    | version | OS                      |
+| :------ | :------ | :---------------------- |
+| Safari  | >=15    | `mac ios`               |
+| Chrome  | >=80    | `mac ios windows linux` |
+| Firefox | >=96    | `mac ios windows linux` |
+| Edge    | >=80    | `mac ios windows linux` |
+
 ## Screenshots
 
-- 所有可调试页面
+- Pages
 
 ![index.png](./screenshots/index.png)
 
-- 调试页面
+- Inspector page
 
 ![inspect.png](./screenshots/inspect.png)
 
@@ -43,15 +52,11 @@ Options:
 
 ## Github Codespaces
 
-调试非英文网站，会出现页面字符乱码问题，这种情况是由于系统缺少相应语言的字体文件，可把对应语言字体文件放到`~/.fonts`或者`/usr/share/fonts`下即可。例如使用[HarmonyOS Sans](https://developer.harmonyos.com/cn/docs/design/des-guides/font-0000001157868583)字体渲染中文。
+There will be a problem of page character scrambling When debugging a non English website. This situation is because the system does not have a font file in the corresponding language. The corresponding language font file can be put into `~/.fonts` or `/usr/share/fonts`. For example, you can use [HarmonyOS Sans](https://developer.harmonyos.com/cn/docs/design/des-guides/font-0000001157868583) to render Chinese fonts.
+use xx to render Chinese fonts
 
 ```bash
 curl -o HarmonyOS_Sans.zip https://communityfile-drcn.op.hicloud.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20211104104632.29664895974930825801937957883629:50521103025534:2800:1C62D8D976C9EAB505E2AAE22BD5B04FB5E6E311A8C39626B70F3F5BCF941EF9.zip\?needInitFileName\=true
 
 unzip -d ~/.fonts/ HarmonyOS_Sans.zip
 ```
-
-## FAQ
-
-- 页面白屏。如果是 iPad，请确保使用最新版本的 Safari 或 Chrome 访问调试页面，安卓平板，请使用最新版本 Chrome 或其他浏览器最新版本访问调试页面。
-- 是否支持 Firefox？目前支持主流浏览器的的最新版本，具体兼容性未测试，主要支持 Safari 与 Chrome。
