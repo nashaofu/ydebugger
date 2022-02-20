@@ -1,8 +1,7 @@
 {
   "name": "ydebugger",
-  "version": "0.1.2",
-  "description": "让你的平板不再吃灰，不再买前生产力，买后爱奇艺，让 Github Codespace & Codeserver 也能在平板设备上进行 Web 开发调试。",
-  "main": "index.js",
+  "version": "0.1.3",
+  "description": "A remote webapp of the Chrome DevTools, you can develop and debug front-end pages on iPad Browser with GitHub codespaces or code-server.",
   "bin": {
     "ydebugger": "./ydebugger.js"
   },
@@ -23,14 +22,12 @@
     "url": "git+https://github.com/nashaofu/ydebugger.git"
   },
   "keywords": [
-    "web",
+    "webapp",
     "chrome",
     "devtools",
-    "debugger",
-    "inspector",
     "remote",
-    "Codeserver",
-    "Codespaces"
+    "debugger",
+    "inspector"
   ],
   "author": "nashaofu",
   "license": "ISC",
