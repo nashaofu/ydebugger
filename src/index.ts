@@ -4,7 +4,7 @@ import ydebugger, { Options } from './ydebugger';
 yargs
   .strict(true)
   .scriptName('ydebugger')
-  .usage('$0 <url>')
+  .usage('$0 [url]')
   .alias('help', 'h')
   .alias('version', 'v')
   .locale('en')
@@ -21,13 +21,12 @@ yargs
   })
   /* eslint-disable @typescript-eslint/indent */
   .command<Options>(
-    '$0 <url>',
+    '$0 [url]',
     'Start a web debugger service',
     // eslint-disable-next-line @typescript-eslint/no-shadow
     (yargs: yargs.Argv) => yargs
         .positional('url', {
           type: 'string',
-          require: true,
           describe: 'debugging website url',
         })
         .option('port', {

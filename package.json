@@ -1,6 +1,6 @@
 {
   "name": "ydebugger",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A remote webapp of the Chrome DevTools, you can develop and debug front-end pages on iPad Browser with GitHub codespaces or code-server.",
   "bin": {
     "ydebugger": "./ydebugger.js"
@@ -30,7 +30,7 @@
     "inspector"
   ],
   "author": "nashaofu",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/nashaofu/ydebugger/issues"
   },

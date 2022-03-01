@@ -32,7 +32,7 @@ ydebugger https://www.google.com
 ## Options
 
 ```bash
-ydebugger <url>
+ydebugger [url]
 
 Positionals:
   url  debugging website url  [string]

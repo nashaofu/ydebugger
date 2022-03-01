@@ -8,7 +8,7 @@ import { createProxyMiddleware, responseInterceptor } from 'http-proxy-middlewar
 import { printUrls } from './utils';
 
 export interface Options {
-  url: string
+  url?: string
   port: number
   open: boolean
   width: number
@@ -34,8 +34,10 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
     },
   });
 
-  const page = await browser.newPage();
-  await page.goto(argv.url);
+  if (argv.url) {
+    const page = await browser.newPage();
+    await page.goto(argv.url);
+  }
 
   const app = express();
 
