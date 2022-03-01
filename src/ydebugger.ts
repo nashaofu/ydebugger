@@ -23,7 +23,7 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
   const debuggingPort = await detect(9222);
 
   const browser = await puppeteer.launch({
-    args: [`--remote-debugging-port=${debuggingPort}`],
+    args: ['--no-sandbox', `--remote-debugging-port=${debuggingPort}`],
     defaultViewport: {
       width: argv.width,
       height: argv.height,
@@ -47,6 +47,7 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
       target: `http://127.0.0.1:${debuggingPort}`,
       ws: true,
       logLevel: 'warn',
+      changeOrigin: true,
       selfHandleResponse: true,
       onProxyReqWs: (proxyReq, req, socket) => {
         socket.on('error', (err) => {
@@ -75,6 +76,7 @@ export default async function ydebugger(argv: yargs.Arguments<Options>) {
     createProxyMiddleware({
       target: `http://127.0.0.1:${debuggingPort}`,
       ws: false,
+      changeOrigin: true,
       logLevel: 'warn',
     }),
   );
