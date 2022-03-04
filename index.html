@@ -137,9 +137,8 @@
         fetch('/json')
           .then(res => res.json())
           .then(devtoolsInfos => {
-            $pages.textContent = ''
-
-            devtoolsInfos.map(item => {
+            const $fragment = document.createDocumentFragment()
+            devtoolsInfos.forEach(item => {
               const { protocol, host } = window.location
               const wsProtocol = protocol === 'https:' ? 'wss' : 'ws'
               const wsUrl = `${host}/devtools/page/${item.id}`
@@ -152,6 +151,7 @@
               const $inspect = document.createElement('a')
               const $close = document.createElement('a')
 
+              $fragment.appendChild($li)
               $li.appendChild($title)
               $li.appendChild($url)
               $li.appendChild($footer)
@@ -172,9 +172,10 @@
               $close.textContent = 'close'
 
               $close.addEventListener('click', () => fetch(`/json/close/${item.id}`))
-
-              $pages.appendChild($li)
             })
+
+            $pages.textContent = ''
+            $pages.appendChild($fragment)
           })
 
         setTimeout(() => getPages(), 1000)
