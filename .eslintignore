@@ -1,4 +1,6 @@
-/lib
+/dist
+.eslintrc.js
+commitlint.config.js
+lint-staged.config.js
 /polyfill
-/.eslintrc.js
 /ydebugger.js
